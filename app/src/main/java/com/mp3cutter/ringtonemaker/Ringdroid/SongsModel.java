@@ -13,6 +13,7 @@ class SongsModel {
     public String mPath;
     public String mAlbum;
     public String mFileType;
+    public String mAlbumId;
 
     public SongsModel(String _ID,
                       String songsName,
@@ -20,6 +21,7 @@ class SongsModel {
                       String duration,
                       String album,
                       String path,
+                      String albumId,
                       String fileType) {
         this._ID = _ID;
         mSongsName = songsName;
@@ -27,6 +29,7 @@ class SongsModel {
         mDuration = duration;
         mPath = path;
         mAlbum = album;
+        mAlbumId=albumId;
         mFileType = fileType;
     }
 

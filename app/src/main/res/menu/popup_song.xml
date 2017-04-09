@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/popup_song_edit"
+        android:title="@string/context_menu_edit"/>
+    <item
+        android:id="@+id/popup_song_delete"
+        android:title="@string/context_menu_delete"/>
+    <item
+        android:id="@+id/popup_song_set_default_ringtone"
+        android:title="@string/context_menu_default_ringtone"/>
+    <item
+        android:id="@+id/popup_song_assign_to_contact"
+        android:title="@string/context_menu_contact"/>
+    <item
+        android:id="@+id/popup_song_set_default_notification"
+        android:title="@string/context_menu_default_notification"/>
+
+</menu>
