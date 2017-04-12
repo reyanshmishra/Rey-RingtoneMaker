@@ -1,12 +1,19 @@
 package com.mp3cutter.ringtonemaker.Ringdroid;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.util.TypedValue;
 
 import com.mp3cutter.ringtonemaker.R;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
@@ -133,4 +140,41 @@ public class Utils {
                 .memoryCache(new WeakMemoryCache()).defaultDisplayImageOptions(options).memoryCacheSizePercentage(13).build();
         ImageLoader.getInstance().init(config);
     }
+
+    public static boolean checkSystemWritePermission(final Activity context) {
+        boolean retVal = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            retVal = Settings.System.canWrite(context);
+            if (retVal) {
+            } else {
+                new AlertDialog.Builder(context)
+                        .setTitle(R.string.set_ringtone)
+                        .setMessage(context.getString(R.string.write_setting_text))
+                        .setPositiveButton(R.string.alert_ok_button, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                                intent.setData(Uri.parse("package:" + context.getPackageName()));
+                                context.startActivity(intent);
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+            }
+        }
+        return retVal;
+    }
+
+    public static int getDimensionInPixel(Context context, int dp) {
+        return (int) TypedValue.applyDimension(0, dp, context.getResources().getDisplayMetrics());
+    }
+
+
 }

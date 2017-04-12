@@ -25,4 +25,45 @@
         android:layout_height="0px"
         android:layout_weight="1"/>
 
+    <LinearLayout
+        android:id="@+id/permission_message_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/lock"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/permission_required"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/permission_required_desc"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/cardview_dark_background"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/dark_blue"
+            android:paddingLeft="120dp"
+            android:paddingRight="120dp"
+            android:text="@string/allow"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+
 </LinearLayout>

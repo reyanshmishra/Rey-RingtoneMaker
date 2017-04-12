@@ -21,6 +21,7 @@ package com.mp3cutter.ringtonemaker.Ringdroid;
  */
 
 import android.app.AlertDialog;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -58,11 +59,10 @@ import java.util.Arrays;
  * an audio file or using an intent to record a new one, and then
  * launches RingdroidEditActivity from here.
  */
-public class RingdroidSelectActivity extends AppCompatActivity {
+public class RingdroidSelectActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private SearchView mSearchView;
     private SimpleCursorAdapter mAdapter;
-    private boolean mWasGetContentIntent;
 
 
     // Result codes
@@ -104,7 +104,6 @@ public class RingdroidSelectActivity extends AppCompatActivity {
             return;
         }
         Intent intent = getIntent();
-        mWasGetContentIntent = intent.getAction().equals(Intent.ACTION_GET_CONTENT);
 
         // Inflate our UI from its XML layout description.
         setContentView(R.layout.media_select);
@@ -114,7 +113,6 @@ public class RingdroidSelectActivity extends AppCompatActivity {
 
         mData.addAll(Utils.getSongList(getApplicationContext(), true));
         mData.addAll(Utils.getSongList(getApplicationContext(), false));
-
 
         mSongsAdapter = new SongsAdapter(this, mData);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -207,17 +205,17 @@ public class RingdroidSelectActivity extends AppCompatActivity {
                     getResources().getColor(R.color.type_bkgnd_ringtone));
         } else if (0 != cursor.getInt(cursor.getColumnIndexOrThrow(
                 MediaStore.Audio.Media.IS_ALARM))) {
-            view.setImageResource(R.drawable.bottom_dragger);
+            view.setImageResource(R.drawable.start_dragger);
             ((View) view.getParent()).setBackgroundColor(
                     getResources().getColor(R.color.type_bkgnd_alarm));
         } else if (0 != cursor.getInt(cursor.getColumnIndexOrThrow(
                 MediaStore.Audio.Media.IS_NOTIFICATION))) {
-            view.setImageResource(R.drawable.bottom_dragger);
+            view.setImageResource(R.drawable.start_dragger);
             ((View) view.getParent()).setBackgroundColor(
                     getResources().getColor(R.color.type_bkgnd_notification));
         } else if (0 != cursor.getInt(cursor.getColumnIndexOrThrow(
                 MediaStore.Audio.Media.IS_MUSIC))) {
-            view.setImageResource(R.drawable.bottom_dragger);
+            view.setImageResource(R.drawable.start_dragger);
             ((View) view.getParent()).setBackgroundColor(
                     getResources().getColor(R.color.type_bkgnd_music));
         }
@@ -256,26 +254,12 @@ public class RingdroidSelectActivity extends AppCompatActivity {
         mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setIconified(false);
+        mSearchView.clearFocus();
+        mSearchView.setOnQueryTextListener(this);
 
-        if (mSearchView != null) {
-            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                public boolean onQueryTextChange(String newText) {
-                    return true;
-                }
-
-                public boolean onQueryTextSubmit(String query) {
-                    return true;
-                }
-            });
-        }
         return true;
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -335,20 +319,40 @@ public class RingdroidSelectActivity extends AppCompatActivity {
     private void setAsDefaultRingtoneOrNotification(int pos) {
         // If the item is a ringtone then set the default ringtone,
         // otherwise it has to be a notification so set the default notification sound
+
+        if (!Utils.checkSystemWritePermission(this)) return;
+
         if (mData.get(pos).mFileType.equalsIgnoreCase(Constants.IS_RINGTONE)) {
+
             RingtoneManager.setActualDefaultRingtoneUri(
                     RingdroidSelectActivity.this,
-                    RingtoneManager.TYPE_RINGTONE, getUri(pos));
+                    RingtoneManager.TYPE_RINGTONE,
+                    getInternalUri(pos));
+
             Toast.makeText(
                     RingdroidSelectActivity.this,
                     R.string.default_ringtone_success_message,
                     Toast.LENGTH_SHORT)
                     .show();
+
+        } else if (mData.get(pos).mFileType.equalsIgnoreCase(Constants.IS_MUSIC)) {
+            RingtoneManager.setActualDefaultRingtoneUri(
+                    RingdroidSelectActivity.this,
+                    RingtoneManager.TYPE_RINGTONE,
+                    getExtUri(pos));
+
+            Toast.makeText(
+                    RingdroidSelectActivity.this,
+                    R.string.default_ringtone_success_message,
+                    Toast.LENGTH_SHORT)
+                    .show();
+
         } else {
             RingtoneManager.setActualDefaultRingtoneUri(
                     RingdroidSelectActivity.this,
                     RingtoneManager.TYPE_NOTIFICATION,
-                    getUri(pos));
+                    getInternalUri(pos));
+
             Toast.makeText(
                     RingdroidSelectActivity.this,
                     R.string.default_notification_success_message,
@@ -378,23 +382,28 @@ public class RingdroidSelectActivity extends AppCompatActivity {
         return -1;
     }
 
-    private Uri getUri(int pos) {
-        /*//Get the uri of the item that is in the row
-        Cursor c = mAdapter.getCursor();
-        int uriIndex = getUriIndex(c);
-        if (uriIndex == -1) {
-            return null;
-        }
-        String itemUri = c.getString(uriIndex) + "/" +
-                c.getString(c.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));*/
-        return MediaStore.Audio.Media.getContentUriForPath(mData.get(pos).mPath);
+    private Uri getInternalUri(int pos) {
+        return ContentUris.withAppendedId(MediaStore.Audio.Media.INTERNAL_CONTENT_URI, Long.parseLong(mData.get(pos)._ID));
     }
+
+    private Uri getExtUri(int pos) {
+        return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, Long.parseLong(mData.get(pos)._ID));
+    }
+
 
     private boolean chooseContactForRingtone(int pos) {
         try {
             //Go to the choose contact activity
             Intent intent = new Intent(RingdroidSelectActivity.this, ChooseContactActivity.class);
-            intent.putExtra(Constants.FILE_NAME, String.valueOf(getUri(pos)));
+
+            if (mData.get(pos).mFileType.equalsIgnoreCase(Constants.IS_RINGTONE)) {
+                intent.putExtra(Constants.FILE_NAME, String.valueOf(getInternalUri(pos)));
+            } else if (mData.get(pos).mFileType.equalsIgnoreCase(Constants.IS_MUSIC)) {
+                intent.putExtra(Constants.FILE_NAME, String.valueOf(getExtUri(pos)));
+            } else {
+                intent.putExtra(Constants.FILE_NAME, String.valueOf(getInternalUri(pos)));
+            }
+
             startActivityForResult(intent, REQUEST_CODE_CHOOSE_CONTACT);
         } catch (Exception e) {
             Log.e("Ringdroid", "Couldn't open Choose Contact window" + e);
@@ -491,7 +500,6 @@ public class RingdroidSelectActivity extends AppCompatActivity {
     private void onRecord() {
         try {
             Intent intent = new Intent(Intent.ACTION_EDIT, Uri.parse("record"));
-            intent.putExtra("was_get_content_intent", mWasGetContentIntent);
             intent.setClassName("com.ringdroid", "com.ringdroid.RingdroidEditActivity");
             startActivityForResult(intent, REQUEST_CODE_EDIT);
         } catch (Exception e) {
@@ -505,9 +513,22 @@ public class RingdroidSelectActivity extends AppCompatActivity {
     }
 
     private void startEditor(int pos) {
-        Intent intent = new Intent(Intent.ACTION_EDIT, Uri.parse(mData.get(pos).mPath));
-        intent.putExtra("was_get_content_intent", mWasGetContentIntent);
-        intent.setClassName("com.ringdroid", "com.ringdroid.RingdroidEditActivity");
-        startActivityForResult(intent, REQUEST_CODE_EDIT);
+
+        Intent intent = new Intent(mContext, RingdroidEditActivity.class);
+        intent.putExtra("FILE_PATH", mData.get(pos).mPath);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (newText.length() > 0) {
+
+        }
+        return false;
     }
 }

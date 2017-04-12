@@ -19,31 +19,34 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Ringdroid.RingdroidSelectActivity"
+            android:name=".ringtonemaker.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.mp3cutter.ringtonemaker.Ringdroid.RingdroidEditActivity"
+            android:name=".Ringdroid.RingdroidEditActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true"
             android:hardwareAccelerated="true"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">
             <intent-filter android:label="@string/edit_intent">
                 <action android:name="android.intent.action.EDIT"/>
+
                 <data android:mimeType="audio/*"/>
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.mp3cutter.ringtonemaker.Ringdroid.ChooseContactActivity"
+            android:name=".Ringdroid.ChooseContactActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:exported="true"/>
-
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".Ringdroid.RingdroidSelectActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

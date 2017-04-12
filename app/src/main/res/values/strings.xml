@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">RingtoneMaker</string>
+    <string name="app_name">Bell</string>
     <string name="ringdroid_app_name">Ringdroid</string>
 
     <!--
@@ -150,6 +150,12 @@
     <string name="duration_format" translatable="false"><xliff:g id="hours">%1$s</xliff:g> <xliff:g id="minutes">%2$s</xliff:g></string>
     <string name="durationformatshort" translatable="false"><xliff:g id="format">%2$d:%3$02d</xliff:g></string>
     <string name="durationformatlong" translatable="false"><xliff:g id="format">%1$d:%2$02d:%3$02d</xliff:g></string>
+    <string name="ringtone_set">Ringtone set.</string>
+    <string name="set_ringtone">Set Ringtone!</string>
+    <string name="write_setting_text">Ringtone make requiers permission to \'Write Settings\' in order to set your ringtone.\n After granting permission, try setting your ringtone again.</string>
+    <string name="permission_required">Permission required.</string>
+    <string name="permission_required_desc">Allow Bell to access your ringtones and music library</string>
+    <string name="allow">Allow</string>
 
 
 </resources>

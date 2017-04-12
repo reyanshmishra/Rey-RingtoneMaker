@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#D81B60</color>
+    <color name="colorPrimaryDark">#AD1457</color>
     <color name="colorAccent">#FF4081</color>
 
 
     <color name="transparent_bg">#55000000</color>
     <color name="white">#ffffff</color>
+    <color name="dark_blue">#00021d</color>
     <color name="transparent_bg_dark">#99000000</color>
 
 
@@ -24,4 +25,7 @@
     <color name="type_bkgnd_notification">#88666600</color>
     <color name="type_bkgnd_music">#88000000</color>
     <color name="type_bkgnd_unsupported">#88cccccc</color>
+
+
+
 </resources>

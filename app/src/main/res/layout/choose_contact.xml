@@ -28,7 +28,7 @@
     android:gravity="center_vertical">
 
     <ImageView
-     android:src="@drawable/ic_action_search"
+     android:src="@drawable/magnify"
      android:layout_marginLeft="8dip"
      android:layout_width="wrap_content"
      android:layout_height="wrap_content" />

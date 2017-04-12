@@ -10,7 +10,7 @@
 
     <item
         android:id="@+id/action_reset"
-        android:icon="@drawable/ic_action_turn_left"
+        android:icon="@drawable/restart"
         android:title="@string/menu_reset"
         app:showAsAction="always" />
 
