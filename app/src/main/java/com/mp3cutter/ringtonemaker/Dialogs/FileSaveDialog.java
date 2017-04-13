@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 
-package com.mp3cutter.ringtonemaker.Ringdroid;
+package com.mp3cutter.ringtonemaker.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.mp3cutter.ringtonemaker.R;
 
 import java.util.ArrayList;
 
 public class FileSaveDialog extends Dialog {
+
     // File kinds - these should correspond to the order in which
     // they're presented in the spinner control
     public static final int FILE_KIND_MUSIC = 0;
@@ -50,10 +47,6 @@ public class FileSaveDialog extends Dialog {
     private String mOriginalName;
     private ArrayList<String> mTypeArray;
     private int mPreviousSelection;
-    private WindowManager.LayoutParams mLayoutParams;
-    private Context mContext;
-    private TextView mNameText;
-    private TextView mTypeText;
 
     /**
      * Return a human-readable name for a kind (music, alarm, ringtone, ...).
@@ -73,9 +66,7 @@ public class FileSaveDialog extends Dialog {
             case FILE_KIND_RINGTONE:
                 return "Ringtone";
         }
-
     }
-
 
     public FileSaveDialog(Context context,
                           Resources resources,
@@ -83,7 +74,10 @@ public class FileSaveDialog extends Dialog {
                           Message response) {
         super(context);
 
-        //setTitle(resources.getString(R.string.file_save_title));
+        // Inflate our UI from its XML layout description.
+        setContentView(R.layout.file_save);
+
+        setTitle(resources.getString(R.string.file_save_title));
 
         mTypeArray = new ArrayList<String>();
         mTypeArray.add(resources.getString(R.string.type_music));
@@ -91,32 +85,13 @@ public class FileSaveDialog extends Dialog {
         mTypeArray.add(resources.getString(R.string.type_notification));
         mTypeArray.add(resources.getString(R.string.type_ringtone));
 
-        mOriginalName = originalName;
-        mContext = context;
-        mResponse = response;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.file_save);
-
-        getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
-        lp.dimAmount = 0.5f;
-        getWindow().setAttributes(lp);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-        mLayoutParams = getWindow().getAttributes();
-        mLayoutParams.dimAmount = 0.5f;
-        getWindow().setAttributes(mLayoutParams);
         mFilename = (EditText) findViewById(R.id.filename);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, R.layout.spinner_text, mTypeArray);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown);
-        mNameText = (TextView) findViewById(R.id.text_view_name);
+        mOriginalName = originalName;
 
-        mTypeText = (TextView) findViewById(R.id.text_view_type);
-
-
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                context, android.R.layout.simple_spinner_item, mTypeArray);
+        adapter.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item);
         mTypeSpinner = (Spinner) findViewById(R.id.ringtone_type);
         mTypeSpinner.setAdapter(adapter);
         mTypeSpinner.setSelection(FILE_KIND_RINGTONE);
@@ -138,13 +113,10 @@ public class FileSaveDialog extends Dialog {
 
         Button save = (Button) findViewById(R.id.save);
         save.setOnClickListener(saveListener);
-
         Button cancel = (Button) findViewById(R.id.cancel);
         cancel.setOnClickListener(cancelListener);
-
-
+        mResponse = response;
     }
-
 
     private void setFilenameEditBoxFromName(boolean onlyIfNotEdited) {
         if (onlyIfNotEdited) {

@@ -1,10 +1,10 @@
-package com.mp3cutter.ringtonemaker.Ringdroid;
+package com.mp3cutter.ringtonemaker.Models;
 
 /**
  * Created by REYANSH on 4/8/2017.
  */
 
-class SongsModel {
+public class SongsModel {
 
     public String _ID;
     public String mSongsName;

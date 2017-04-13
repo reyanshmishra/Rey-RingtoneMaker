@@ -1,4 +1,4 @@
-package com.mp3cutter.ringtonemaker.Ringdroid;
+package com.mp3cutter.ringtonemaker.Adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,7 +7,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mp3cutter.ringtonemaker.Activities.RingdroidSelectActivity;
+import com.mp3cutter.ringtonemaker.Models.SongsModel;
 import com.mp3cutter.ringtonemaker.R;
+import com.mp3cutter.ringtonemaker.Ringdroid.Utils;
+import com.mp3cutter.ringtonemaker.Views.BubbleTextGetter;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -17,7 +21,7 @@ import java.util.ArrayList;
  * Created by REYANSH on 4/8/2017.
  */
 
-public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ItemHolder> {
+public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ItemHolder> implements BubbleTextGetter {
 
     public SongsAdapter(RingdroidSelectActivity ringdroidSelectActivity, ArrayList<SongsModel> data) {
         mRingdroidSelectActivity = ringdroidSelectActivity;
@@ -57,6 +61,21 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ItemHolder> 
         return mData == null ? 0 : mData.size();
     }
 
+    @Override
+    public String getTextToShowInBubble(int pos) {
+        try {
+            return String.valueOf(mData.get(pos).mSongsName.charAt(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "-";
+        }
+    }
+
+    public void updateData(ArrayList<SongsModel> data) {
+        this.mData=data;
+        notifyDataSetChanged();
+    }
+
     public class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView mSongsImage;
         private TextView mSongName;
@@ -79,7 +98,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ItemHolder> 
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.overflow:
-                    mRingdroidSelectActivity.onPopUpMenuClickListener(v,getAdapterPosition());
+                    mRingdroidSelectActivity.onPopUpMenuClickListener(v, getAdapterPosition());
                     return;
             }
             mRingdroidSelectActivity.onItemClicked(getAdapterPosition());

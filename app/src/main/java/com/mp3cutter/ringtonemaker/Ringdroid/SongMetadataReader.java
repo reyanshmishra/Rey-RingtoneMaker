@@ -33,7 +33,7 @@ public class SongMetadataReader {
     public String mGenre = "";
     public int mYear = -1;
 
-    SongMetadataReader(Activity activity, String filename) {
+    public SongMetadataReader(Activity activity, String filename) {
         mActivity = activity;
         mFilename = filename;
         mTitle = getBasename(filename);

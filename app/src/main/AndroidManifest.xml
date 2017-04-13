@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ringtonemaker.SplashActivity"
+            android:name=".Activities.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Ringdroid.RingdroidEditActivity"
+            android:name=".Activities.RingdroidEditActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true"
             android:hardwareAccelerated="true"
@@ -40,11 +40,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Ringdroid.ChooseContactActivity"
+            android:name=".Activities.ChooseContactActivity"
             android:configChanges="orientation|keyboardHidden"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Ringdroid.RingdroidSelectActivity"
+        <activity android:name=".Activities.RingdroidSelectActivity"
                   android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.mp3cutter.ringtonemaker.Ringdroid;
+package com.mp3cutter.ringtonemaker.Dialogs;
 
 import android.app.Dialog;
 import android.content.Context;

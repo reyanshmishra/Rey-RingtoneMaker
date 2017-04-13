@@ -1,4 +1,4 @@
-package com.mp3cutter.ringtonemaker.Ringdroid;
+package com.mp3cutter.ringtonemaker.Activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,6 +33,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mp3cutter.ringtonemaker.R;
+import com.mp3cutter.ringtonemaker.Dialogs.AfterSaveActionDialog;
+import com.mp3cutter.ringtonemaker.Dialogs.FileSaveDialog;
+import com.mp3cutter.ringtonemaker.Ringdroid.MarkerView;
+import com.mp3cutter.ringtonemaker.Ringdroid.SamplePlayer;
+import com.mp3cutter.ringtonemaker.Ringdroid.SongMetadataReader;
+import com.mp3cutter.ringtonemaker.Ringdroid.Utils;
+import com.mp3cutter.ringtonemaker.Ringdroid.WaveformView;
 import com.mp3cutter.ringtonemaker.Ringdroid.soundfile.SoundFile;
 
 import java.io.File;

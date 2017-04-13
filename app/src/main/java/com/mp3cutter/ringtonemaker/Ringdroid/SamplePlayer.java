@@ -24,12 +24,10 @@ import com.mp3cutter.ringtonemaker.Ringdroid.soundfile.SoundFile;
 
 import java.nio.ShortBuffer;
 
-class SamplePlayer {
+public class SamplePlayer {
     public interface OnCompletionListener {
         public void onCompletion();
     }
-
-    ;
 
     private ShortBuffer mSamples;
     private int mSampleRate;

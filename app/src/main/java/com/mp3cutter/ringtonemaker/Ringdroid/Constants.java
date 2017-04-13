@@ -10,4 +10,5 @@ public class Constants {
     public static String IS_ALARM = "IS_ALARM";
     public static String IS_NOTIFICATION = "IS_NOTIFICATION";
     public static String IS_MUSIC = "IS_MUSIC";
+    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS=45;
 }

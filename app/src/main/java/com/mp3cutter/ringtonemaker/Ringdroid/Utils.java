@@ -1,20 +1,29 @@
 package com.mp3cutter.ringtonemaker.Ringdroid;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 
+import com.mp3cutter.ringtonemaker.Models.ContactsModel;
+import com.mp3cutter.ringtonemaker.Models.SongsModel;
 import com.mp3cutter.ringtonemaker.R;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -24,6 +33,9 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static com.mp3cutter.ringtonemaker.Ringdroid.Constants.REQUEST_ID_MULTIPLE_PERMISSIONS;
 
 /**
  * Created by REYANSH on 4/8/2017.
@@ -174,6 +186,76 @@ public class Utils {
 
     public static int getDimensionInPixel(Context context, int dp) {
         return (int) TypedValue.applyDimension(0, dp, context.getResources().getDisplayMetrics());
+    }
+
+
+    public static ArrayList<ContactsModel> getContacts(Context context, String searchQuery) {
+
+        String selection = "(DISPLAY_NAME LIKE \"%" + searchQuery + "%\")";
+
+        ArrayList<ContactsModel> contactsModels = new ArrayList<>();
+
+        Cursor cursor = context.getContentResolver().query(
+                ContactsContract.Contacts.CONTENT_URI,
+                new String[]{
+                        ContactsContract.Contacts._ID,
+                        ContactsContract.Contacts.CUSTOM_RINGTONE,
+                        ContactsContract.Contacts.DISPLAY_NAME,
+                        ContactsContract.Contacts.LAST_TIME_CONTACTED,
+                        ContactsContract.Contacts.STARRED,
+                        ContactsContract.Contacts.TIMES_CONTACTED},
+                selection,
+                null,
+                "STARRED DESC, " +
+                        "TIMES_CONTACTED DESC, " +
+                        "LAST_TIME_CONTACTED DESC, " +
+                        "DISPLAY_NAME ASC");
+
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                ContactsModel contactsModel = new ContactsModel(cursor.getString(2),
+                        cursor.getString(0));
+                contactsModels.add(contactsModel);
+            } while (cursor.moveToNext());
+        }
+
+        return contactsModels;
+    }
+
+
+    public static int getMatColor(Context context) {
+        int returnColor;
+        {
+            TypedArray colors = context.getResources().obtainTypedArray(R.array.mdcolor_500);
+            int index = (int) (Math.random() * colors.length());
+            returnColor = colors.getColor(index, Color.BLACK);
+            colors.recycle();
+        }
+        return returnColor;
+    }
+
+    public static boolean checkAndRequestPermissions(Activity activity, boolean justCheckDontAsk) {
+        int modifyAudioPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int writeExternalPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (modifyAudioPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if (writeExternalPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (justCheckDontAsk) {
+            return true;
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(activity,
+                    listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                    REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+        return true;
     }
 
 
