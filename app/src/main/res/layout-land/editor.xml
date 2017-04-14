@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+/**
+ * Copyright (c) 2007, Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0 
+ *
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.
+ */
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:orientation="vertical">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:contentInsetStart="0dp"
+            app:contentInsetStart="0dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0px"
+        android:layout_weight="1">
+
+        <com.mp3cutter.ringtonemaker.Ringdroid.WaveformView
+            android:id="@+id/waveform"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"/>
+
+        <com.mp3cutter.ringtonemaker.Ringdroid.MarkerView
+            android:id="@+id/startmarker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/start_marker"
+            android:nextFocusDown="@+id/endmarker"
+            android:src="@drawable/start_dragger"/>
+
+        <com.mp3cutter.ringtonemaker.Ringdroid.MarkerView
+            android:id="@+id/endmarker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/end_marker"
+            android:nextFocusDown="@+id/info"
+            android:nextFocusUp="@+id/startmarker"
+            android:src="@drawable/end_dragger"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:nextFocusDown="@+id/play"
+        android:nextFocusUp="@+id/endmarker"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="68dip"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/mark_start"
+            android:layout_width="wrap_content"
+            android:layout_height="31dip"
+            android:layout_marginLeft="10dip"
+            android:clickable="true"
+            android:gravity="center"
+            android:labelFor="@+id/starttext"
+            android:nextFocusUp="@+id/info"
+            android:text="@string/start_label"
+            android:textColor="#ffffffff"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/starttext"
+            android:layout_width="70dip"
+            android:layout_height="31dip"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="30dip"
+            android:gravity="center"
+            android:inputType="number|numberDecimal"
+            android:nextFocusLeft="@+id/zoom_out"
+            android:nextFocusRight="@+id/endtext"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/mark_end"
+            android:layout_width="wrap_content"
+            android:layout_height="31dip"
+            android:clickable="true"
+            android:gravity="center"
+            android:labelFor="@+id/endtext"
+            android:nextFocusUp="@+id/info"
+            android:text="@string/end_label"
+            android:textColor="#ffffffff"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/endtext"
+            android:layout_width="70dip"
+            android:layout_height="31dip"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="50dip"
+            android:gravity="center"
+            android:inputType="number|numberDecimal"
+            android:nextFocusLeft="@+id/starttext"
+            android:nextFocusRight="@+id/save"
+            android:textSize="16sp"/>
+
+        <ImageButton
+            android:id="@+id/rew"
+            style="@android:style/MediaButton"
+            android:layout_width="52dip"
+            android:layout_height="52dip"
+            android:layout_marginBottom="6dip"
+            android:layout_marginTop="6dip"
+            android:contentDescription="@string/rewind"
+            android:nextFocusUp="@+id/info"
+            android:src="@android:drawable/ic_media_previous"/>
+
+        <ImageButton
+            android:id="@+id/play"
+            style="@android:style/MediaButton"
+            android:layout_width="52dip"
+            android:layout_height="52dip"
+            android:layout_marginBottom="6dip"
+            android:layout_marginTop="6dip"
+            android:contentDescription="@string/play"
+            android:nextFocusUp="@+id/info"
+            android:src="@android:drawable/ic_media_play"/>
+
+        <ImageButton
+            android:id="@+id/ffwd"
+            style="@android:style/MediaButton"
+            android:layout_width="52dip"
+            android:layout_height="52dip"
+            android:layout_marginBottom="6dip"
+            android:layout_marginTop="6dip"
+            android:contentDescription="@string/ffwd"
+            android:nextFocusUp="@+id/info"
+            android:src="@android:drawable/ic_media_next"/>
+
+    </LinearLayout>
+
+</LinearLayout>
