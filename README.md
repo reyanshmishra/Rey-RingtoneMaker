@@ -13,9 +13,9 @@ Supported file formats right now include:
 
 * Mp3
 * AAC/MP4 (including unprotected iTunes music)
-> WAV
-> 3GPP/AMR (this is the format used when you record sounds directly on the handset)
-> OGG
+* WAV
+* 3GPP/AMR (this is the format used when you record sounds directly on the handset)
+* OGG
 
 
 Developed By
