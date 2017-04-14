@@ -4,8 +4,8 @@ Bell is a free open source Android application for recording and editing sounds,
 
 Screenshots
 ============
-<img src="http://i.imgur.com/first_shot.png" width=761 height=480>
-<img src="http://i.imgur.com/sec_shot.png" width=761 height=480>
+<img src="https://github.com/reyanshmishra/Rey-RingtoneMaker/blob/master/Screenshots/first_shot.png" width=761 height=480>
+<img src="https://github.com/reyanshmishra/Rey-RingtoneMaker/blob/master/Screenshots/sec_shot.png" width=761 height=480>
 
 Features
 =========
