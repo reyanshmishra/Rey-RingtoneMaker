@@ -61,6 +61,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.mp3cutter.ringtonemaker.Ringdroid.Constants.REQUEST_ID_MULTIPLE_PERMISSIONS;
+import static com.mp3cutter.ringtonemaker.Ringdroid.Constants.REQUEST_ID_RECORD_AUDIO_PERMISSION;
 
 /**
  * Main screen that shows up when you launch Ringdroid. Handles selecting
@@ -128,13 +129,6 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
         mFastScroller = (FastScroller) findViewById(R.id.fast_scroller);
         mFastScroller.setRecyclerView(mRecyclerView);
 
-        if (Utils.checkAndRequestPermissions(this, true)) {
-            mFastScroller.setVisibility(View.GONE);
-            mPermissionLayout.setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.GONE);
-        } else {
-            loadData();
-        }
 
         mSongsAdapter = new SongsAdapter(this, mData);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -145,9 +139,17 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
         mAllowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.checkAndRequestPermissions(RingdroidSelectActivity.this, false);
+                Utils.checkAndRequestPermissions(RingdroidSelectActivity.this, true);
             }
         });
+
+        if (Utils.checkAndRequestPermissions(this, false)) {
+            loadData();
+        } else {
+            mFastScroller.setVisibility(View.GONE);
+            mPermissionLayout.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+        }
     }
 
 
@@ -155,35 +157,46 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_ID_MULTIPLE_PERMISSIONS: {
-
                 Map<String, Integer> perms = new HashMap<>();
                 perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
 
                 if (grantResults.length > 0) {
                     for (int i = 0; i < permissions.length; i++)
                         perms.put(permissions[i], grantResults[i]);
-                    if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                         loadData();
                         mFastScroller.setVisibility(View.VISIBLE);
                         mPermissionLayout.setVisibility(View.GONE);
                         mRecyclerView.setVisibility(View.VISIBLE);
+                        invalidateOptionsMenu();
                     }
                 }
+                break;
             }
+            case REQUEST_ID_RECORD_AUDIO_PERMISSION:
+                Map<String, Integer> perms = new HashMap<>();
+                perms.put(Manifest.permission.RECORD_AUDIO, PackageManager.PERMISSION_GRANTED);
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perms.put(permissions[i], grantResults[i]);
+                    if (perms.get(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                        onRecord();
+                    }
+                }
+                break;
         }
     }
 
     private void loadData() {
-        mData.addAll(Utils.getSongList(getApplicationContext(), true));
-        mData.addAll(Utils.getSongList(getApplicationContext(), false));
+        mData.addAll(Utils.getSongList(getApplicationContext(), true, null));
+        mData.addAll(Utils.getSongList(getApplicationContext(), false, null));
         mSongsAdapter.updateData(mData);
     }
 
     /**
      * Called with an Activity we started with an Intent returns.
      */
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent dataIntent) {
         if (requestCode != REQUEST_CODE_EDIT) {
@@ -195,17 +208,24 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
         }
 
         setResult(RESULT_OK, dataIntent);
-        //finish();  // TODO(nfaralli): why would we want to quit the app here?
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.select_options, menu);
         mSearchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
+
+        if (Utils.checkAndRequestPermissions(this, false)) {
+            menu.findItem(R.id.menu_search).setVisible(true);
+        } else {
+            menu.findItem(R.id.menu_search).setVisible(false);
+        }
+
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setIconified(false);
         mSearchView.clearFocus();
         mSearchView.setOnQueryTextListener(this);
+
         return true;
     }
 
@@ -217,7 +237,9 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
                 RingdroidEditActivity.onAbout(this);
                 return true;
             case R.id.action_record:
-                onRecord();
+                if (Utils.checkAndRequestAudioPermissions(RingdroidSelectActivity.this)) {
+                    onRecord();
+                }
                 return true;
             default:
                 return false;
@@ -265,11 +287,7 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
 
 
     private void setAsDefaultRingtoneOrNotification(int pos) {
-        // If the item is a ringtone then set the default ringtone,
-        // otherwise it has to be a notification so set the default notification sound
-
         if (!Utils.checkSystemWritePermission(this)) return;
-
         if (mData.get(pos).mFileType.equalsIgnoreCase(Constants.IS_RINGTONE)) {
 
             RingtoneManager.setActualDefaultRingtoneUri(
@@ -474,9 +492,10 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if (newText.length() > 0) {
-
-        }
+        mData.clear();
+        mData.addAll(Utils.getSongList(getApplicationContext(), true, newText));
+        mData.addAll(Utils.getSongList(getApplicationContext(), false, newText));
+        mSongsAdapter.updateData(mData);
         return false;
     }
 }

@@ -701,9 +701,7 @@ public class RingdroidEditActivity extends AppCompatActivity implements MarkerVi
                         mRecordingKeepGoing = false;
                     }
                 });
-        // TODO(nfaralli): try to use a FrameLayout and pass it to the following inflate call.
-        // Using null, android:layout_width etc. may not work (hence text is at the top of view).
-        // On the other hand, if the text is big enough, this is good enough.
+
         adBuilder.setView(getLayoutInflater().inflate(R.layout.record_audio, null));
         mAlertDialog = adBuilder.show();
         mTimerTextView = (TextView) mAlertDialog.findViewById(R.id.record_audio_timer);
@@ -748,6 +746,7 @@ public class RingdroidEditActivity extends AppCompatActivity implements MarkerVi
                     }
                     mPlayer = new SamplePlayer(mSoundFile);
                 } catch (final Exception e) {
+
                     mAlertDialog.dismiss();
                     e.printStackTrace();
                     mInfoContent = e.toString();
@@ -1088,8 +1087,10 @@ public class RingdroidEditActivity extends AppCompatActivity implements MarkerVi
      * dialog is presented as an error, and the stack trace is
      * logged.  If there's no exception, it's a success message.
      */
+
     private void showFinalAlert(Exception e, CharSequence message) {
         CharSequence title;
+
         if (e != null) {
             Log.e("Ringdroid", "Error: " + message);
             Log.e("Ringdroid", getStackTrace(e));

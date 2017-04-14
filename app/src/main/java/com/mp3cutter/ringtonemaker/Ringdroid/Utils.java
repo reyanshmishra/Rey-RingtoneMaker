@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mp3cutter.ringtonemaker.Ringdroid.Constants.REQUEST_ID_MULTIPLE_PERMISSIONS;
+import static com.mp3cutter.ringtonemaker.Ringdroid.Constants.REQUEST_ID_RECORD_AUDIO_PERMISSION;
 
 /**
  * Created by REYANSH on 4/8/2017.
@@ -72,7 +73,15 @@ public class Utils {
             "\"" + MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "\""
     };
 
-    public static ArrayList<SongsModel> getSongList(Context context, boolean internal) {
+    public static ArrayList<SongsModel> getSongList(Context context, boolean internal, String searchString) {
+
+        String[] selectionArgs = null;
+        String selection = null;
+        if (searchString != null && searchString.length() > 0) {
+            selection = "title LIKE ?";
+            selectionArgs = new String[]{"%" + searchString + "%"};
+        }
+
         ArrayList<SongsModel> songsModels = new ArrayList<>();
         Uri CONTENT_URI;
         String[] COLUMNS;
@@ -87,8 +96,8 @@ public class Utils {
         Cursor cursor = context.getContentResolver().query(
                 CONTENT_URI,
                 COLUMNS,
-                null,
-                null,
+                selection,
+                selectionArgs,
                 MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -235,28 +244,33 @@ public class Utils {
         return returnColor;
     }
 
-    public static boolean checkAndRequestPermissions(Activity activity, boolean justCheckDontAsk) {
+    public static boolean checkAndRequestPermissions(Activity activity, boolean ask) {
         int modifyAudioPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
-        int writeExternalPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
         List<String> listPermissionsNeeded = new ArrayList<>();
+
         if (modifyAudioPermission != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
-        if (writeExternalPermission != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-        if (justCheckDontAsk) {
-            return true;
-        }
+
         if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(activity,
-                    listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
-                    REQUEST_ID_MULTIPLE_PERMISSIONS);
-            return false;
+            if (ask) {
+                ActivityCompat.requestPermissions(activity,
+                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                        REQUEST_ID_MULTIPLE_PERMISSIONS);
+                return false;
+            } else {
+                return false;
+            }
         }
         return true;
     }
 
-
+    public static boolean checkAndRequestAudioPermissions(Activity activity) {
+        int modifyAudioPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO);
+        if (modifyAudioPermission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_ID_RECORD_AUDIO_PERMISSION);
+            return false;
+        }
+        return true;
+    }
 }
