@@ -101,15 +101,21 @@ public class Utils {
                 MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                String fileType;
-                if (cursor.getString(6).equalsIgnoreCase("1")) {
+
+                String fileType = "";
+                try {
+                    if (cursor.getString(6).equalsIgnoreCase("1")) {
+                        fileType = Constants.IS_RINGTONE;
+                    } else if (cursor.getString(7).equalsIgnoreCase("1")) {
+                        fileType = Constants.IS_ALARM;
+                    } else if (cursor.getString(8).equalsIgnoreCase("1")) {
+                        fileType = Constants.IS_NOTIFICATION;
+                    } else {
+                        fileType = Constants.IS_MUSIC;
+                    }
+                } catch (Exception e) {
+                    //lets assume its ringtone.
                     fileType = Constants.IS_RINGTONE;
-                } else if (cursor.getString(7).equalsIgnoreCase("1")) {
-                    fileType = Constants.IS_ALARM;
-                } else if (cursor.getString(8).equalsIgnoreCase("1")) {
-                    fileType = Constants.IS_NOTIFICATION;
-                } else {
-                    fileType = Constants.IS_MUSIC;
                 }
 
                 SongsModel song = new SongsModel(

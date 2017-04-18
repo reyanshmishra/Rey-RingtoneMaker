@@ -117,6 +117,7 @@ public class RingdroidEditActivity extends AppCompatActivity implements MarkerVi
     private static final int REQUEST_CODE_CHOOSE_CONTACT = 1;
     public static final String EDIT = "com.ringdroid.action.EDIT";
     private Context mContext;
+    private boolean mWasGetContentIntent;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -136,7 +137,14 @@ public class RingdroidEditActivity extends AppCompatActivity implements MarkerVi
         // message when the user saves, we should just return whatever
         // they create.
 
-        mFilename = intent.getExtras().getString("FILE_PATH").toString().replaceFirst("file://", "").replaceAll("%20", " ");
+        mWasGetContentIntent = intent.getBooleanExtra("was_get_content_intent", false);
+
+        try {
+            mFilename = intent.getExtras().getString("FILE_PATH").toString().replaceFirst("file://", "").replaceAll("%20", " ");
+        } catch (NullPointerException e) {
+            mFilename = intent.getData().toString().replaceFirst("file://", "").replaceAll("%20", " ");
+        }
+
         mSoundFile = null;
         mKeyDown = false;
         mHandler = new Handler();
