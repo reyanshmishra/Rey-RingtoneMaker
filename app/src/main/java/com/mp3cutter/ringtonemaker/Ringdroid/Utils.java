@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mp3cutter.ringtonemaker.Ringdroid.Constants.REQUEST_ID_MULTIPLE_PERMISSIONS;
+import static com.mp3cutter.ringtonemaker.Ringdroid.Constants.REQUEST_ID_READ_CONTACTS_PERMISSION;
 import static com.mp3cutter.ringtonemaker.Ringdroid.Constants.REQUEST_ID_RECORD_AUDIO_PERMISSION;
 
 /**
@@ -279,4 +280,17 @@ public class Utils {
         }
         return true;
     }
+
+    public static boolean checkAndRequestContactsPermissions(Activity activity) {
+        int modifyAudioPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_CONTACTS);
+        if (modifyAudioPermission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_CONTACTS},
+                    REQUEST_ID_READ_CONTACTS_PERMISSION);
+            return false;
+        }
+        return true;
+    }
+
+
+
 }

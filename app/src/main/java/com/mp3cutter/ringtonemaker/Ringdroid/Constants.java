@@ -12,4 +12,6 @@ public class Constants {
     public static String IS_MUSIC = "IS_MUSIC";
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS=45;
     public static final int REQUEST_ID_RECORD_AUDIO_PERMISSION=46;
+    public static final int REQUEST_ID_READ_CONTACTS_PERMISSION=47;
+
 }

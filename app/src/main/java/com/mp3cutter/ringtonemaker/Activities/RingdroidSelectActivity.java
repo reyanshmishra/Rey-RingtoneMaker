@@ -61,6 +61,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.mp3cutter.ringtonemaker.Ringdroid.Constants.REQUEST_ID_MULTIPLE_PERMISSIONS;
+import static com.mp3cutter.ringtonemaker.Ringdroid.Constants.REQUEST_ID_READ_CONTACTS_PERMISSION;
 import static com.mp3cutter.ringtonemaker.Ringdroid.Constants.REQUEST_ID_RECORD_AUDIO_PERMISSION;
 
 /**
@@ -82,6 +83,7 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
     private static final int CMD_DELETE = 5;
     private static final int CMD_SET_AS_DEFAULT = 6;
     private static final int CMD_SET_AS_CONTACT = 7;
+    int mPos;
 
     /**
      * Called when the activity is first created.
@@ -184,6 +186,17 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
                     }
                 }
                 break;
+            case REQUEST_ID_READ_CONTACTS_PERMISSION:
+                Map<String, Integer> perm = new HashMap<>();
+                perm.put(Manifest.permission.READ_CONTACTS, PackageManager.PERMISSION_GRANTED);
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perm.put(permissions[i], grantResults[i]);
+                    if (perm.get(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                        chooseContactForRingtone(mPos);
+                    }
+                }
+                break;
         }
     }
 
@@ -246,7 +259,9 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
         }
     }
 
+
     public void onPopUpMenuClickListener(View v, final int position) {
+        mPos = position;
         final PopupMenu menu = new PopupMenu(this, v);
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -259,7 +274,9 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
                         confirmDelete(position);
                         break;
                     case R.id.popup_song_assign_to_contact:
-                        chooseContactForRingtone(position);
+                        if (Utils.checkAndRequestContactsPermissions(RingdroidSelectActivity.this)) {
+                            chooseContactForRingtone(position);
+                        }
                         break;
                     case R.id.popup_song_set_default_notification:
                         setAsDefaultRingtoneOrNotification(position);
@@ -358,22 +375,17 @@ public class RingdroidSelectActivity extends AppCompatActivity implements Search
 
 
     private boolean chooseContactForRingtone(int pos) {
-        try {
-            //Go to the choose contact activity
-            Intent intent = new Intent(RingdroidSelectActivity.this, ChooseContactActivity.class);
 
-            if (mData.get(pos).mFileType.equalsIgnoreCase(Constants.IS_RINGTONE)) {
-                intent.putExtra(Constants.FILE_NAME, String.valueOf(getInternalUri(pos)));
-            } else if (mData.get(pos).mFileType.equalsIgnoreCase(Constants.IS_MUSIC)) {
-                intent.putExtra(Constants.FILE_NAME, String.valueOf(getExtUri(pos)));
-            } else {
-                intent.putExtra(Constants.FILE_NAME, String.valueOf(getInternalUri(pos)));
-            }
-
-            startActivityForResult(intent, REQUEST_CODE_CHOOSE_CONTACT);
-        } catch (Exception e) {
-            Log.e("Ringdroid", "Couldn't open Choose Contact window" + e);
+        Intent intent = new Intent(RingdroidSelectActivity.this, ChooseContactActivity.class);
+        if (mData.get(pos).mFileType.equalsIgnoreCase(Constants.IS_RINGTONE)) {
+            intent.putExtra(Constants.FILE_NAME, String.valueOf(getInternalUri(pos)));
+        } else if (mData.get(pos).mFileType.equalsIgnoreCase(Constants.IS_MUSIC)) {
+            intent.putExtra(Constants.FILE_NAME, String.valueOf(getExtUri(pos)));
+        } else {
+            intent.putExtra(Constants.FILE_NAME, String.valueOf(getInternalUri(pos)));
         }
+        startActivity(intent);
+
         return true;
     }
 
