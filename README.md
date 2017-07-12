@@ -1,3 +1,8 @@
+We do not store or access any of your data.
+We not send you receive any thing of you data.
+It's purely safe to use this app.
+
+
 Bell Ringtone Maker
 ================
 Bell is a free open source Android application for recording and editing sounds, and creating ringtones, directly on the handset.
