@@ -24,16 +24,16 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/app_bar"
-        />
+        android:layout_below="@+id/app_bar"/>
 
     <LinearLayout
         android:id="@+id/permission_message_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="vertical"
-        android:visibility="gone">
+        >
 
         <ImageView
             android:layout_width="120dp"
